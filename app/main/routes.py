@@ -1,12 +1,11 @@
 import os
-from flask import render_template, redirect, url_for, flash, current_app, send_file
+from flask import render_template, redirect, url_for, flash, current_app, send_file, send_from_directory
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 from app import db
 from app.main import main
 from app.main.forms import MusicUploadForm, PlaylistForm, FavoriteForm
 from app.main.models import Music, Playlist, Favorite
-from flask import send_from_directory, current_app
 
 @main.route('/')
 def index():
@@ -21,7 +20,6 @@ def dashboard():
     favorites = Favorite.query.filter_by(user_id=current_user.id).all()
     return render_template('dashboard.html', greeting=greeting, recent_music=recent_music, playlists=playlists, favorites=favorites)
     
-
 @main.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload():
@@ -29,24 +27,28 @@ def upload():
     if form.validate_on_submit():
         file = form.file.data
         filename = secure_filename(file.filename)
-        file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
-        
+        upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        os.makedirs(os.path.dirname(upload_path), exist_ok=True)
+        file.save(upload_path)
+
         music = Music(
             title=form.title.data, 
             artist=form.artist.data, 
             file=filename, 
             user_id=current_user.id
         )
-        
+
         if form.image.data:
             image = form.image.data
             image_filename = secure_filename(image.filename)
-            image.save(os.path.join(current_app.config['UPLOAD_FOLDER'], image_filename))
+            image_upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], image_filename)
+            os.makedirs(os.path.dirname(image_upload_path), exist_ok=True)
+            image.save(image_upload_path)
             music.image = image_filename
-        
+
         db.session.add(music)
         db.session.commit()
-        
+
         flash('Music uploaded successfully.')
         return redirect(url_for('main.dashboard'))
     
@@ -74,7 +76,6 @@ def create_playlist():
         return redirect(url_for('main.dashboard'))
     return render_template('create_playlist.html', form=form)
 
-
 @main.route('/add_favorite/<int:music_id>', methods=['POST'])
 @login_required
 def add_favorite(music_id):
@@ -92,9 +93,6 @@ def stream_music(music_id):
     music = Music.query.get_or_404(music_id)
     file_path = os.path.join(os.path.dirname(current_app.root_path), 'uploads', music.file)
     return send_file(file_path)
-
-
-
 
 @main.route('/create_smart_playlist', methods=['GET', 'POST'])
 @login_required
@@ -164,7 +162,6 @@ def add_track_to_playlist(playlist_id, music_id):
     flash('Track added to playlist.')
     return redirect(url_for('main.dashboard'))
 
-
 @main.route('/spotify_login')
 def spotify_login():
     spotify_auth_url = "https://accounts.spotify.com/authorize"
@@ -207,7 +204,6 @@ def import_spotify_playlists():
     flash('Spotify playlists imported successfully.')
     return redirect(url_for('main.dashboard'))
 
-
 @main.route('/create_category', methods=['GET', 'POST'])
 @login_required
 def create_category():
@@ -239,3 +235,8 @@ def edit_profile():
         form.username.data = current_user.username
         form.email.data = current_user.email
     return render_template('edit_profile.html', form=form)
+
+@main.route('/init-db')
+def init_db():
+    db.create_all()
+    return "Database initialized!"

@@ -16,4 +16,8 @@
     "@capacitor/core": "^6.1.0",
     "@capacitor/ios": "^6.1.0"
   }
+,
+  "scripts": {
+    "build": "pip install -r requirements.txt && flask db upgrade"
+  }
 }

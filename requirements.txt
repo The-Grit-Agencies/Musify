@@ -1,2 +1,12 @@
 Flask==2.0.1
 gunicorn==20.1.0
+werkzeug==2.0.1
+Flask-SQLAlchemy==2.5.1
+SQLAlchemy==1.4.22
+flask_migrate
+flask_login
+flask_wtf
+wtforms
+email_validator
+pydrive
+psycopg2-binary
