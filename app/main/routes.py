@@ -1,11 +1,12 @@
 import os
-from flask import render_template, redirect, url_for, flash, current_app, send_file, send_from_directory
+from flask import render_template, redirect, url_for, flash, current_app, request, send_file
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
+from io import BytesIO
 from app import db
 from app.main import main
-from app.main.forms import MusicUploadForm, PlaylistForm, FavoriteForm
-from app.main.models import Music, Playlist, Favorite
+from app.main.forms import MusicUploadForm, PlaylistForm, FavoriteForm, SmartPlaylistForm, RenamePlaylistForm, CategoryForm
+from app.main.models import Music, Playlist, Favorite, PlaylistMusic, PlaylistCategory
 
 @main.route('/')
 def index():
@@ -26,25 +27,19 @@ def upload():
     form = MusicUploadForm()
     if form.validate_on_submit():
         file = form.file.data
-        filename = secure_filename(file.filename)
-        upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-        os.makedirs(os.path.dirname(upload_path), exist_ok=True)
-        file.save(upload_path)
+        file_data = file.read()
 
         music = Music(
             title=form.title.data, 
             artist=form.artist.data, 
-            file=filename, 
+            file_data=file_data, 
             user_id=current_user.id
         )
 
         if form.image.data:
             image = form.image.data
-            image_filename = secure_filename(image.filename)
-            image_upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], image_filename)
-            os.makedirs(os.path.dirname(image_upload_path), exist_ok=True)
-            image.save(image_upload_path)
-            music.image = image_filename
+            image_data = image.read()
+            music.image_data = image_data
 
         db.session.add(music)
         db.session.commit()
@@ -54,10 +49,11 @@ def upload():
     
     return render_template('upload.html', form=form)
 
-@main.route('/uploads/<filename>')
+@main.route('/stream/<int:music_id>')
 @login_required
-def uploaded_file(filename):
-    return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
+def stream_music(music_id):
+    music = Music.query.get_or_404(music_id)
+    return send_file(BytesIO(music.file_data), attachment_filename=music.title, as_attachment=True)
 
 @main.route('/create_playlist', methods=['GET', 'POST'])
 @login_required
@@ -67,9 +63,8 @@ def create_playlist():
         playlist = Playlist(name=form.name.data, user_id=current_user.id)
         if form.cover_image.data:
             cover_image = form.cover_image.data
-            cover_image_filename = secure_filename(cover_image.filename)
-            cover_image.save(os.path.join(current_app.config['UPLOAD_FOLDER'], cover_image_filename))
-            playlist.cover_image = cover_image_filename
+            cover_image_data = cover_image.read()
+            playlist.cover_image_data = cover_image_data
         db.session.add(playlist)
         db.session.commit()
         flash('Playlist created successfully.')
@@ -86,13 +81,6 @@ def add_favorite(music_id):
         db.session.commit()
         flash('Music added to favorites.')
     return redirect(url_for('main.dashboard'))
-
-@main.route('/stream/<int:music_id>')
-@login_required
-def stream_music(music_id):
-    music = Music.query.get_or_404(music_id)
-    file_path = os.path.join(os.path.dirname(current_app.root_path), 'uploads', music.file)
-    return send_file(file_path)
 
 @main.route('/create_smart_playlist', methods=['GET', 'POST'])
 @login_required

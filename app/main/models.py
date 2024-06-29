@@ -5,8 +5,8 @@ class Music(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128), nullable=False)
     artist = db.Column(db.String(128), nullable=False)
-    file = db.Column(db.String(128), nullable=False)
-    image = db.Column(db.String(128), nullable=True)
+    file_data = db.Column(db.LargeBinary, nullable=False)
+    image_data = db.Column(db.LargeBinary, nullable=True)
     date_posted = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     genre = db.Column(db.String(50))
@@ -17,7 +17,7 @@ class Playlist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    cover_image = db.Column(db.String(100))
+    cover_image_data = db.Column(db.LargeBinary, nullable=True)
     category_id = db.Column(db.Integer, db.ForeignKey('playlist_category.id'))
 
 class Favorite(db.Model):
@@ -36,4 +36,3 @@ class PlaylistCategory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
