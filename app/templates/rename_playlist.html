@@ -1,0 +1,14 @@
+<!-- rename_playlist.html -->
+{% extends "base.html" %}
+{% block content %}
+    <h1>Rename Playlist</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.name.label }} {{ form.name() }}
+        </div>
+        <div>
+            {{ form.submit() }}
+        </div>
+    </form>
+{% endblock %}

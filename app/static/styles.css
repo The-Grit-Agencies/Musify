@@ -1,0 +1,98 @@
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.overlay {
+    transition: transform 0.3s ease-in-out;
+}
+
+.overlay-hidden {
+    transform: translateY(-100%);
+}
+
+.overlay-visible {
+    transform: translateY(0);
+}
+
+.no-scroll {
+    overflow: hidden;
+}
+
+
+body, html {
+   
+    background-color: #420101; /* Dark background color */
+    color: #ffffff; /* White text color */
+}
+
+
+.centered-form-container {
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.hidden-audio {
+    display: none;
+}
+
+.player-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+.track-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.track-info img {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+.controls button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    margin: 0 10px;
+}
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+}
+.progress-bar {
+    flex-grow: 1;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 0 10px;
+    position: relative;
+}
+.progress-bar div {
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    width: 0;
+}

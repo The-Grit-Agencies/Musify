@@ -1,0 +1,6 @@
+{% if music %}
+    <form method="POST" action="{{ url_for('main.add_favorite', music_id=music.id) }}">
+        {{ form.hidden_tag() }}
+        {{ form.submit() }}
+    </form>
+{% endif %}

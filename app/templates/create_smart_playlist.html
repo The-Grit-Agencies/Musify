@@ -1,0 +1,17 @@
+<!-- create_smart_playlist.html -->
+{% extends "base.html" %}
+{% block content %}
+    <h1>Create Smart Playlist</h1>
+    <form method="POST" action="{{ url_for('main.create_smart_playlist') }}">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.criteria.label }} {{ form.criteria() }}
+        </div>
+        <div>
+            {{ form.value.label }} {{ form.value() }}
+        </div>
+        <div>
+            {{ form.submit() }}
+        </div>
+    </form>
+{% endblock %}

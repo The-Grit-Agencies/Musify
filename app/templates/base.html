@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <!-- Fullscreen Overlay Menu -->
+    <div id="overlayMenu" class="fixed inset-0 z-40 bg-black bg-opacity-90 flex justify-center items-center overlay overlay-hidden">
+        <div class="text-center">
+            <button id="closeMenu" class="text-white focus:outline-none">
+                <!-- Close icon or text -->
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            <ul class="space-y-8 text-2xl font-semibold text-white">
+                <li><a href="{{ url_for('main.index') }}" class="hover:text-gray-400">Home</a></li>
+                {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('main.dashboard') }}" class="hover:text-gray-400">Dashboard</a></li>
+                <li><a href="{{ url_for('main.upload') }}" class="hover:text-gray-400">Upload Music</a></li>
+                <li><a href="{{ url_for('main.create_playlist') }}" class="hover:text-gray-400">Create Playlist</a></li>
+                <li><a href="{{ url_for('main.profile') }}" class="hover:text-gray-400">Profile</a></li>
+                <li><a href="{{ url_for('auth.logout') }}" class="hover:text-gray-400">Logout</a></li>
+                {% else %}
+                <li><a href="{{ url_for('auth.login') }}" class="hover:text-gray-400">Login</a></li>
+                <li><a href="{{ url_for('auth.register') }}" class="hover:text-gray-400">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4">
+        <!-- Header with Hamburger and Avatar -->
+        <header class="flex justify-between items-center bg-gray-900 text-white py-4 px-6 rounded-lg mb-6">
+            <button id="openMenu" class="text-white focus:outline-none md:hidden">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+            <h1 class="text-2xl font-bold">
+                Musify
+                </h1>
+            
+            
+            <div class="relative">
+                <button id="avatarButton" class="text-white focus:outline-none">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 5.121A3 3 0 118.485 8.485M12 14v7m-4-4h8"></path>
+                    </svg>
+                </button>
+                <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-30 hidden">
+                    <a href="{{ url_for('main.profile') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Profile</a>
+                    <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</a>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul>
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+            </main>
+        
+  
+
+    <script>
+        document.getElementById('openMenu').addEventListener('click', function() {
+            var overlayMenu = document.getElementById('overlayMenu');
+            overlayMenu.classList.remove('overlay-hidden');
+            overlayMenu.classList.add('overlay-visible');
+            document.body.classList.add('no-scroll');  // Disable scrolling
+        });
+    
+        document.getElementById('closeMenu').addEventListener('click', function() {
+            var overlayMenu = document.getElementById('overlayMenu');
+            overlayMenu.classList.remove('overlay-visible');
+            overlayMenu.classList.add('overlay-hidden');
+            document.body.classList.remove('no-scroll');  // Enable scrolling
+        });
+    
+        document.getElementById('avatarButton').addEventListener('click', function() {
+            var dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('hidden');
+        });
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    
+</body>
+</html>
