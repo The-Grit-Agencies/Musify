@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="text-2xl font-semibold mb-4">All Music</h2>
+<main class="p-4">
+    <div class="music-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for music in all_music %}
+        <div style="background-color: rgba(0, 0, 0, 0.8);" class="music-item flex items-center rounded-lg p-2">
+            <img src="{{ url_for('main.get_image', music_id=music.id) }}" alt="{{ music.title }} cover" class="w-12 h-12 object-cover rounded-full">
+            <div class="flex-grow ml-4">
+                <h3 class="text-lg font-medium text-white">{{ music.title }}</h3>
+                <p class="text-gray-400">by {{ music.artist }}</p>
+                <p class="text-gray-400">{{ music.genre }}</p>
+            </div>
+            <button class="ml-4 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600" onclick="playMusic('{{ url_for('main.stream_music', music_id=music.id) }}')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-6.528 3.76A1 1 0 017 14.084V9.916a1 1 0 011.224-.977l6.528 3.76a1 1 0 010 1.744z" />
+                </svg>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+<script>
+    function playMusic(url) {
+        const audioPlayer = document.getElementById('audioPlayer');
+        const audioSource = document.getElementById('audioSource');
+        audioSource.src = url;
+        audioPlayer.load();
+        audioPlayer.play();
+    }
+</script>
+
+{% endblock %}

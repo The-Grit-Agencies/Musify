@@ -1,12 +1,11 @@
-import os
-from flask import render_template, redirect, url_for, flash, current_app, request, send_file
+from flask import render_template, redirect, url_for, flash, request, send_file, session
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 from io import BytesIO
 from app import db
-from app.main import main
-from app.main.forms import MusicUploadForm, PlaylistForm, FavoriteForm, SmartPlaylistForm, RenamePlaylistForm, CategoryForm
-from app.main.models import Music, Playlist, Favorite, PlaylistMusic, PlaylistCategory
+from app.main import main  # Assuming 'main' is your Blueprint instance
+from app.main.forms import MusicUploadForm
+from app.main.models import Music, Playlist, Favorite  # Import Playlist and Favorite models as needed
 
 @main.route('/')
 def index():
@@ -20,7 +19,12 @@ def dashboard():
     playlists = Playlist.query.filter_by(user_id=current_user.id).all()
     favorites = Favorite.query.filter_by(user_id=current_user.id).all()
     return render_template('dashboard.html', greeting=greeting, recent_music=recent_music, playlists=playlists, favorites=favorites)
-    
+
+@main.route('/music')
+def all_music():
+    all_music = Music.query.order_by(Music.date_posted.desc()).all()
+    return render_template('music.html', all_music=all_music)
+
 @main.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload():
@@ -31,7 +35,8 @@ def upload():
 
         music = Music(
             title=form.title.data, 
-            artist=form.artist.data, 
+            artist=form.artist.data,
+            genre=form.genre.data, 
             file_data=file_data, 
             user_id=current_user.id
         )
@@ -53,7 +58,14 @@ def upload():
 @login_required
 def stream_music(music_id):
     music = Music.query.get_or_404(music_id)
-    return send_file(BytesIO(music.file_data), attachment_filename=music.title, as_attachment=True)
+    return send_file(BytesIO(music.file_data), attachment_filename=f"{music.title}.mp3", as_attachment=True)
+
+@main.route('/image/<int:music_id>')
+@login_required
+def get_image(music_id):
+    music = Music.query.get_or_404(music_id)
+    return send_file(BytesIO(music.image_data), mimetype='image/jpeg')
+
 
 @main.route('/create_playlist', methods=['GET', 'POST'])
 @login_required

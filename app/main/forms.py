@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired
 class MusicUploadForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     artist = StringField('Artist', validators=[DataRequired()])
+    genre = StringField('Genre', validators=[DataRequired()])
     file = FileField('Upload Music', validators=[DataRequired(), FileAllowed(['mp3', 'wav'], 'Audio files only!')])
     image = FileField('Upload Image', validators=[FileAllowed(['jpg', 'png'], 'Images only!')])
     submit = SubmitField('Upload')
@@ -26,3 +27,11 @@ class SmartPlaylistForm(FlaskForm):
     criteria = SelectField('Criteria', choices=[('genre', 'Genre'), ('artist', 'Artist'), ('mood', 'Mood'), ('tempo', 'Tempo')], validators=[DataRequired()])
     value = StringField('Value', validators=[DataRequired()])
     submit = SubmitField('Create Playlist')
+
+class RenamePlaylistForm(FlaskForm):
+    name = StringField('New Playlist Name', validators=[DataRequired()])
+    submit = SubmitField('Rename Playlist')
+
+class EditProfileForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    submit = SubmitField('Save Changes')

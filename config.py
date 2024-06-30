@@ -2,7 +2,7 @@ import os
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'your_secret_key'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://default:wX6ehP4NmHfz@ep-steep-frog-a4tmrend.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://default:COelESN7m1vV@ep-delicate-credit-a2nkv9v5.eu-central-1.aws.neon.tech:5432/verceldb?sslmode=require'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or '/tmp/uploads'
 

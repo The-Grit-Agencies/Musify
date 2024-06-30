@@ -15,27 +15,40 @@
     }
 </style>
 
-
+<section class="p-4">
+    <h2 class="text-2xl font-semibold mb-4">Genres</h2>
+    <div class="flex space-x-4 overflow-x-auto">
+        <div class="genre-card bg-red-500">G1</div>
+        <div class="genre-card bg-green-500">G2</div>
+        <div class="genre-card bg-blue-500">G3</div>
+        <div class="genre-card bg-yellow-500">G4</div>
+        <div class="genre-card bg-purple-500">G5</div>
+        <div class="genre-card bg-pink-500">G6</div>
+        <div class="genre-card bg-teal-500">G7</div>
+    </div>
+</section>
 
 <section class="p-4">
     <h2 class="text-2xl font-semibold mb-4">Recently Added</h2>
     <div class="space-y-4">
-        {% for music in recent_music %}
-        <div style="background-color: rgba(0, 0, 0, 0.8);" class="flex items-center rounded-lg p-2">
- 
-                <img src="{{ url_for('main.uploaded_file', filename=music.image) }}" alt="{{ music.title }} cover" class="w-12 h-12 object-cover rounded-lg mr-4">
-                <div  class="flex-grow">
-                    <h3 class="text-lg font-medium">{{ music.title }}</h3>
-                    <p class="text-gray-400">by {{ music.artist }}</p>
-                    
-                </div>
-                <button class="ml-4 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600" onclick="playMusic('{{ url_for('main.stream_music', music_id=music.id) }}')">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-6.528 3.76A1 1 0 017 14.084V9.916a1 1 0 011.224-.977l6.528 3.76a1 1 0 010 1.744z" />
-                    </svg>
-                </button>
+        {% for music in recent_music[:3] %}
+        <div class="recent-music-item flex items-center rounded-lg p-2">
+            <img src="{{ url_for('main.get_image', music_id=music.id) }}" alt="{{ music.title }} cover" class="w-12 h-12 object-cover rounded-full">
+            <div class="info ml-4">
+                <h3 class="text-lg font-medium text-white">{{ music.title }}</h3>
+                <p class="text-gray-400">by {{ music.artist }}</p>
+                <p class="text-gray-400">{{ music.genre }}</p>
             </div>
+            <button class="ml-4 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600" onclick="playMusic('{{ url_for('main.stream_music', music_id=music.id) }}')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-6.528 3.76A1 1 0 017 14.084V9.916a1 1 0 011.224-.977l6.528 3.76a1 1 0 010 1.744z" />
+                </svg>
+            </button>
+        </div>
         {% endfor %}
+    </div>
+    <div class="mt-4">
+        <a href="{{ url_for('main.all_music') }}" class="text-blue-500 hover:underline">All</a>
     </div>
 </section>
 
